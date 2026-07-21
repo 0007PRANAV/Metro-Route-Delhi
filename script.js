@@ -5,7 +5,29 @@ const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let stations = [];
-let disruptions = [];
+let disruptions = [
+  {
+    stationName: "Rajiv Chowk",
+    status: "Limited",
+    reason: "Crowd management due to a special event.",
+    alternatives: ["Barakhamba Road", "Patel Chowk"],
+    lastUpdated: "2026-07-22 12:05 AM"
+  },
+  {
+    stationName: "Central Secretariat",
+    status: "Closed",
+    reason: "Temporary maintenance work.",
+    alternatives: ["Udyog Bhawan", "Patel Chowk"],
+    lastUpdated: "2026-07-22 12:05 AM"
+  },
+  {
+    stationName: "Kashmere Gate",
+    status: "Open",
+    reason: "No disruption reported.",
+    alternatives: ["Tis Hazari"],
+    lastUpdated: "2026-07-22 12:05 AM"
+  }
+];
 
 const stationInput = document.getElementById("stationInput");
 const searchBtn = document.getElementById("searchBtn");
@@ -46,19 +68,18 @@ async function loadStations() {
   stations = await res.json();
 }
 
-async function loadDisruptions() {
-  const { data, error } = await supabase
-    .from("disruptions")
-    .select("*")
-    .order("lastUpdated", { ascending: false });
+async function loadDisruptionsFromSupabase() {
+  try {
+    const { data, error } = await supabase
+      .from("disruptions")
+      .select("*")
+      .order("lastUpdated", { ascending: false });
 
-  if (error) {
-    console.error("Error loading disruptions:", error);
-    disruptions = [];
-    return;
+    if (error) throw error;
+    if (data && data.length) disruptions = data;
+  } catch (err) {
+    console.warn("Using local fallback disruptions data.", err);
   }
-
-  disruptions = data || [];
 }
 
 function renderStation(station) {
@@ -110,20 +131,23 @@ function searchStation() {
 }
 
 async function initRealtime() {
-  await supabase.realtime.setAuth();
+  try {
+    await supabase.realtime.setAuth();
 
-  supabase
-    .channel("disruptions-table")
-    .on(
-      "postgres_changes",
-      { event: "*", schema: "public", table: "disruptions" },
-      async () => {
-        await loadDisruptions();
-        const current = clean(stationInput.value);
-        if (current) searchStation();
-      }
-    )
-    .subscribe();
+    supabase
+      .channel("disruptions-table")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "disruptions" },
+        async () => {
+          await loadDisruptionsFromSupabase();
+          if (clean(stationInput.value)) searchStation();
+        }
+      )
+      .subscribe();
+  } catch (err) {
+    console.warn("Realtime not connected, using fallback data only.", err);
+  }
 }
 
 searchBtn.addEventListener("click", searchStation);
@@ -133,6 +157,6 @@ stationInput.addEventListener("keydown", (e) => {
 
 (async function start() {
   await loadStations();
-  await loadDisruptions();
+  await loadDisruptionsFromSupabase();
   await initRealtime();
 })();
