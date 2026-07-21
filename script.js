@@ -1,5 +1,11 @@
-let stationData = [];
-let disruptionData = [];
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const SUPABASE_URL = "YOUR_SUPABASE_URL";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let stations = [];
+let disruptions = [];
 
 const stationInput = document.getElementById("stationInput");
 const searchBtn = document.getElementById("searchBtn");
@@ -14,30 +20,19 @@ const resultReason = document.getElementById("resultReason");
 const resultAlternatives = document.getElementById("resultAlternatives");
 const resultUpdated = document.getElementById("resultUpdated");
 
-async function loadData() {
-  try {
-    const [stationsRes, disruptionsRes] = await Promise.all([
-      fetch("stations.json"),
-      fetch("disruptions.json")
-    ]);
-
-    stationData = await stationsRes.json();
-    disruptionData = await disruptionsRes.json();
-  } catch (error) {
-    console.error("Failed to load data files:", error);
-    showError("Could not load station data.");
-  }
+function clean(value) {
+  return String(value || "").trim().toLowerCase();
 }
 
-function normalize(text) {
-  return text.trim().toLowerCase();
+function setBadge(status) {
+  statusBadge.textContent = status;
+  statusBadge.className = `badge ${clean(status)}`;
 }
 
-function showError(message) {
+function showMessage(title, badge = "Closed") {
   resultCard.classList.remove("hidden");
-  resultName.textContent = message;
-  statusBadge.textContent = "Error";
-  statusBadge.className = "badge closed";
+  resultName.textContent = title;
+  setBadge(badge);
   resultLines.textContent = "-";
   resultInterchange.textContent = "-";
   resultCoordinates.textContent = "-";
@@ -46,40 +41,33 @@ function showError(message) {
   resultUpdated.textContent = "-";
 }
 
-function searchStation() {
-  const query = normalize(stationInput.value);
+async function loadStations() {
+  const res = await fetch("./stations.json");
+  stations = await res.json();
+}
 
-  if (!query) {
-    showError("Please enter a station name.");
+async function loadDisruptions() {
+  const { data, error } = await supabase
+    .from("disruptions")
+    .select("*")
+    .order("lastUpdated", { ascending: false });
+
+  if (error) {
+    console.error("Error loading disruptions:", error);
+    disruptions = [];
     return;
   }
 
-  const station = stationData.find(
-    item => normalize(item.name) === query || normalize(item.name).includes(query)
-  );
+  disruptions = data || [];
+}
 
-  if (!station) {
-    showError("Station not found.");
-    return;
-  }
-
-  const disruption = disruptionData.find(
-    item => normalize(item.stationName) === normalize(station.name)
-  );
-
+function renderStation(station) {
+  const disruption = disruptions.find(d => clean(d.stationName) === clean(station.name));
   const status = disruption?.status || "Open";
-  const reason = disruption?.reason || "No disruption reported.";
-  const alternatives = disruption?.alternatives?.length
-    ? disruption.alternatives.join(", ")
-    : station.alternatives?.length
-      ? station.alternatives.join(", ")
-      : "No alternatives listed.";
-  const updated = disruption?.lastUpdated || "Not updated yet";
 
   resultCard.classList.remove("hidden");
   resultName.textContent = station.name;
-  statusBadge.textContent = status;
-  statusBadge.className = `badge ${status.toLowerCase()}`;
+  setBadge(status);
 
   resultLines.textContent = Array.isArray(station.lines)
     ? station.lines.join(", ")
@@ -89,14 +77,29 @@ function searchStation() {
   resultCoordinates.textContent = station.coordinates
     ? `${station.coordinates.lat}, ${station.coordinates.lng}`
     : "-";
-  resultReason.textContent = reason;
-  resultAlternatives.textContent = alternatives;
-  resultUpdated.textContent = updated;
+
+  resultReason.textContent = disruption?.reason || "No disruption reported.";
+  resultAlternatives.textContent =
+    disruption?.alternatives?.length
+      ? disruption.alternatives.join(", ")
+      : station.alternatives?.length
+        ? station.alternatives.join(", ")
+        : "No alternatives listed.";
+
+  resultUpdated.textContent = disruption?.lastUpdated || "Not updated yet";
 }
 
-searchBtn.addEventListener("click", searchStation);
-stationInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") searchStation();
-});
+function searchStation() {
+  const query = clean(stationInput.value);
 
-loadData();
+  if (!query) {
+    showMessage("Please enter a station name.", "Closed");
+    return;
+  }
+
+  const station = stations.find(
+    s => clean(s.name) === query || clean(s.name).includes(query)
+  );
+
+  if (!station) {
+    showMessage("Station not found.", "Cl
