@@ -1,1 +1,23 @@
-
+[
+  {
+    "stationName": "Rajiv Chowk",
+    "status": "Limited",
+    "reason": "Crowd management due to a special event.",
+    "alternatives": ["Barakhamba Road", "Patel Chowk"],
+    "lastUpdated": "2026-07-21 11:50 PM"
+  },
+  {
+    "stationName": "Central Secretariat",
+    "status": "Closed",
+    "reason": "Temporary maintenance work.",
+    "alternatives": ["Udyog Bhawan", "Patel Chowk"],
+    "lastUpdated": "2026-07-21 11:50 PM"
+  },
+  {
+    "stationName": "Kashmere Gate",
+    "status": "Open",
+    "reason": "No disruption reported.",
+    "alternatives": ["Tis Hazari"],
+    "lastUpdated": "2026-07-21 11:50 PM"
+  }
+]
