@@ -1,1 +1,37 @@
-
+[
+  {
+    "name": "Rajiv Chowk",
+    "lines": ["Blue Line", "Yellow Line"],
+    "coordinates": { "lat": 28.6328, "lng": 77.2197 },
+    "interchange": "Yes",
+    "alternatives": ["Barakhamba Road", "Patel Chowk"]
+  },
+  {
+    "name": "Kashmere Gate",
+    "lines": ["Red Line", "Yellow Line", "Violet Line"],
+    "coordinates": { "lat": 28.6675, "lng": 77.2286 },
+    "interchange": "Yes",
+    "alternatives": ["Tis Hazari", "Shastri Park"]
+  },
+  {
+    "name": "Central Secretariat",
+    "lines": ["Yellow Line", "Violet Line"],
+    "coordinates": { "lat": 28.6156, "lng": 77.2128 },
+    "interchange": "Yes",
+    "alternatives": ["Udyog Bhawan", "Patel Chowk"]
+  },
+  {
+    "name": "New Delhi",
+    "lines": ["Yellow Line", "Airport Express"],
+    "coordinates": { "lat": 28.643, "lng": 77.221 },
+    "interchange": "Yes",
+    "alternatives": ["Shivaji Stadium", "Rajiv Chowk"]
+  },
+  {
+    "name": "Hauz Khas",
+    "lines": ["Yellow Line", "Magenta Line"],
+    "coordinates": { "lat": 28.5434, "lng": 77.2067 },
+    "interchange": "Yes",
+    "alternatives": ["Green Park", "Panchsheel Park"]
+  }
+]
