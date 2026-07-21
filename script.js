@@ -1,52 +1,102 @@
-const stations = [
-  {
-    name: "Rajiv Chowk",
-    status: "Limited",
-    reason: "Crowd management due to event",
-    alternatives: ["Barakhamba Road", "Patel Chowk"],
-    updated: "2026-07-21 11:45 PM"
-  },
-  {
-    name: "Kashmere Gate",
-    status: "Open",
-    reason: "No disruption reported",
-    alternatives: ["Tis Hazari"],
-    updated: "2026-07-21 11:45 PM"
-  },
-  {
-    name: "Central Secretariat",
-    status: "Closed",
-    reason: "Maintenance work",
-    alternatives: ["Udyog Bhawan", "Patel Chowk"],
-    updated: "2026-07-21 11:45 PM"
+let stationData = [];
+let disruptionData = [];
+
+const stationInput = document.getElementById("stationInput");
+const searchBtn = document.getElementById("searchBtn");
+const resultCard = document.getElementById("resultCard");
+
+const resultName = document.getElementById("resultName");
+const statusBadge = document.getElementById("statusBadge");
+const resultLines = document.getElementById("resultLines");
+const resultInterchange = document.getElementById("resultInterchange");
+const resultCoordinates = document.getElementById("resultCoordinates");
+const resultReason = document.getElementById("resultReason");
+const resultAlternatives = document.getElementById("resultAlternatives");
+const resultUpdated = document.getElementById("resultUpdated");
+
+async function loadData() {
+  try {
+    const [stationsRes, disruptionsRes] = await Promise.all([
+      fetch("stations.json"),
+      fetch("disruptions.json")
+    ]);
+
+    stationData = await stationsRes.json();
+    disruptionData = await disruptionsRes.json();
+  } catch (error) {
+    console.error("Failed to load data files:", error);
+    showError("Could not load station data.");
   }
-];
+}
+
+function normalize(text) {
+  return text.trim().toLowerCase();
+}
+
+function showError(message) {
+  resultCard.classList.remove("hidden");
+  resultName.textContent = message;
+  statusBadge.textContent = "Error";
+  statusBadge.className = "badge closed";
+  resultLines.textContent = "-";
+  resultInterchange.textContent = "-";
+  resultCoordinates.textContent = "-";
+  resultReason.textContent = "-";
+  resultAlternatives.textContent = "-";
+  resultUpdated.textContent = "-";
+}
 
 function searchStation() {
-  const input = document.getElementById("stationInput").value.trim().toLowerCase();
-  const resultBox = document.getElementById("result");
+  const query = normalize(stationInput.value);
 
-  const station = stations.find(s => s.name.toLowerCase() === input);
-
-  if (!station) {
-    resultBox.classList.remove("hidden");
-    document.getElementById("stationName").textContent = "Station not found";
-    document.getElementById("stationStatus").textContent = "-";
-    document.getElementById("stationReason").textContent = "-";
-    document.getElementById("stationAlternatives").textContent = "-";
-    document.getElementById("stationUpdated").textContent = "-";
+  if (!query) {
+    showError("Please enter a station name.");
     return;
   }
 
-  resultBox.classList.remove("hidden");
-  document.getElementById("stationName").textContent = station.name;
-  document.getElementById("stationStatus").innerHTML =
-    station.status === "Open"
-      ? `<span class="badge-open">${station.status}</span>`
-      : station.status === "Closed"
-      ? `<span class="badge-closed">${station.status}</span>`
-      : `<span class="badge-limited">${station.status}</span>`;
-  document.getElementById("stationReason").textContent = station.reason;
-  document.getElementById("stationAlternatives").textContent = station.alternatives.join(", ");
-  document.getElementById("stationUpdated").textContent = station.updated;
+  const station = stationData.find(
+    item => normalize(item.name) === query || normalize(item.name).includes(query)
+  );
+
+  if (!station) {
+    showError("Station not found.");
+    return;
+  }
+
+  const disruption = disruptionData.find(
+    item => normalize(item.stationName) === normalize(station.name)
+  );
+
+  const status = disruption?.status || "Open";
+  const reason = disruption?.reason || "No disruption reported.";
+  const alternatives = disruption?.alternatives?.length
+    ? disruption.alternatives.join(", ")
+    : station.alternatives?.length
+      ? station.alternatives.join(", ")
+      : "No alternatives listed.";
+  const updated = disruption?.lastUpdated || "Not updated yet";
+
+  resultCard.classList.remove("hidden");
+  resultName.textContent = station.name;
+  statusBadge.textContent = status;
+  statusBadge.className = `badge ${status.toLowerCase()}`;
+
+  resultLines.textContent = Array.isArray(station.lines)
+    ? station.lines.join(", ")
+    : station.lines || "-";
+
+  resultInterchange.textContent = station.interchange || "No";
+  resultCoordinates.textContent = station.coordinates
+    ? `${station.coordinates.lat}, ${station.coordinates.lng}`
+    : "-";
+  resultReason.textContent = reason;
+  resultAlternatives.textContent = alternatives;
+  resultUpdated.textContent = updated;
 }
+
+searchBtn.addEventListener("click", searchStation);
+stationInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") searchStation();
+});
+
+loadData();
