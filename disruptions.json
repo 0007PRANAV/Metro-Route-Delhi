@@ -4,20 +4,34 @@
     "status": "Limited",
     "reason": "Crowd management due to a special event.",
     "alternatives": ["Barakhamba Road", "Patel Chowk"],
-    "lastUpdated": "2026-07-21 11:50 PM"
+    "lastUpdated": "2026-07-22 12:05 AM"
   },
   {
     "stationName": "Central Secretariat",
     "status": "Closed",
     "reason": "Temporary maintenance work.",
     "alternatives": ["Udyog Bhawan", "Patel Chowk"],
-    "lastUpdated": "2026-07-21 11:50 PM"
+    "lastUpdated": "2026-07-22 12:05 AM"
   },
   {
     "stationName": "Kashmere Gate",
     "status": "Open",
     "reason": "No disruption reported.",
     "alternatives": ["Tis Hazari"],
-    "lastUpdated": "2026-07-21 11:50 PM"
+    "lastUpdated": "2026-07-22 12:05 AM"
+  },
+  {
+    "stationName": "Dwarka Sector 21",
+    "status": "Limited",
+    "reason": "Airport line crowd management during peak travel hours.",
+    "alternatives": ["Dwarka Sector 8", "Yashobhoomi Dwarka Sector 25"],
+    "lastUpdated": "2026-07-22 12:05 AM"
+  },
+  {
+    "stationName": "Hauz Khas",
+    "status": "Open",
+    "reason": "No disruption reported.",
+    "alternatives": ["Green Park"],
+    "lastUpdated": "2026-07-22 12:05 AM"
   }
 ]
