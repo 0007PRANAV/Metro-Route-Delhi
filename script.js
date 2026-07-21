@@ -1,243 +1,133 @@
-let stations = [];
-let disruptions = [];
-let activeLine = "All";
+const stations = [
+  {name:'Rajiv Chowk', lines:['Blue','Yellow'], status:'Open', category:'Interchange', alternatives:['Barakhamba Road','Patel Chowk'], reason:'Central interchange and high traffic.', updated:'Just now', favorite:true},
+  {name:'Kashmere Gate', lines:['Red','Yellow','Violet'], status:'Limited', category:'Interchange', alternatives:['Civil Lines','Lal Qila'], reason:'Partial platform access during maintenance.', updated:'8 min ago'},
+  {name:'AIIMS', lines:['Yellow'], status:'Open', category:'Healthcare', alternatives:['INA','Green Park'], reason:'Fully operational.', updated:'2 min ago'},
+  {name:'Mandi House', lines:['Blue','Violet'], status:'Closed', category:'Interchange', alternatives:['Janpath','ITO'], reason:'Temporary restriction due to operational work.', updated:'15 min ago'},
+  {name:'Hauz Khas', lines:['Yellow','Magenta'], status:'Open', category:'Interchange', alternatives:['Green Park','Panchsheel Park'], reason:'Normal service.', updated:'5 min ago'},
+  {name:'Dwarka Sector 21', lines:['Blue','Airport Express'], status:'Open', category:'Airport Link', alternatives:['Dwarka Sector 8'], reason:'Operational and open.', updated:'3 min ago'},
+  {name:'Noida Electronic City', lines:['Blue'], status:'Limited', category:'Terminal', alternatives:['Noida Sector 62'], reason:'Reduced frequency.', updated:'12 min ago'},
+  {name:'Janakpuri West', lines:['Blue','Magenta'], status:'Open', category:'Interchange', alternatives:['Uttam Nagar East','Tilak Nagar'], reason:'Normal service.', updated:'1 min ago'}
+];
 
-const stationInput = document.getElementById("stationInput");
-const searchBtn = document.getElementById("searchBtn");
-const suggestions = document.getElementById("suggestions");
-const resultCard = document.getElementById("resultCard");
-const stationList = document.getElementById("stationList");
-const stationCount = document.getElementById("stationCount");
-const lineFilters = document.getElementById("lineFilters");
-const resetFiltersBtn = document.getElementById("resetFiltersBtn");
+let state = {
+  q: '',
+  status: 'All',
+  line: 'All',
+  sort: 'Relevance',
+  fav: false,
+  recent: false,
+  selected: stations[0].name
+};
 
-const stationTotal = document.getElementById("stationTotal");
-const lineTotal = document.getElementById("lineTotal");
-const interchangeTotal = document.getElementById("interchangeTotal");
-const openTotal = document.getElementById("openTotal");
+let recent = [];
+const $ = id => document.getElementById(id);
 
-const resultName = document.getElementById("resultName");
-const resultMeta = document.getElementById("resultMeta");
-const statusBadge = document.getElementById("statusBadge");
-const resultLines = document.getElementById("resultLines");
-const resultColors = document.getElementById("resultColors");
-const resultInterchange = document.getElementById("resultInterchange");
-const resultCoordinates = document.getElementById("resultCoordinates");
-const resultType = document.getElementById("resultType");
-const resultAlternatives = document.getElementById("resultAlternatives");
-const resultReason = document.getElementById("resultReason");
-const resultUpdated = document.getElementById("resultUpdated");
+const statuses = ['All','Open','Closed','Limited'];
+const lines = ['All', ...[...new Set(stations.flatMap(s => s.lines))]];
+const sorts = ['Relevance','A-Z','Status'];
 
-function clean(value) {
-  return String(value || "").trim().toLowerCase();
+function buildButtons(root, items, key){
+  root.innerHTML = items.map(v => `<button class="pill ${state[key]===v?'active':''}" data-k="${key}" data-v="${v}">${v}</button>`).join('');
+}
+buildButtons($('statusFilters'), statuses, 'status');
+buildButtons($('lineFilters'), lines, 'line');
+buildButtons($('sortFilters'), sorts, 'sort');
+
+function relevance(s){
+  let score = 0;
+  const q = state.q.toLowerCase();
+  if (!q) score += 0;
+  else {
+    if (s.name.toLowerCase().includes(q)) score += 3;
+    if (s.lines.join(' ').toLowerCase().includes(q)) score += 2;
+    if (s.category.toLowerCase().includes(q)) score += 1;
+    if (s.reason.toLowerCase().includes(q)) score += 1;
+  }
+  if (state.status !== 'All' && s.status === state.status) score += 2;
+  if (state.line !== 'All' && s.lines.includes(state.line)) score += 2;
+  if (state.fav && s.favorite) score += 2;
+  return score;
 }
 
-function uniq(arr) {
-  return [...new Set(arr)];
-}
-
-function getDisruption(name) {
-  return disruptions.find(d => clean(d.stationName) === clean(name));
-}
-
-function getStatus(station) {
-  return getDisruption(station.name)?.status || "Open";
-}
-
-function setBadge(status) {
-  statusBadge.textContent = status;
-  statusBadge.className = `badge ${clean(status)}`;
-}
-
-function colorFromLine(line) {
-  const map = {
-    "Red Line": "#ef4444",
-    "Yellow Line": "#facc15",
-    "Blue Line": "#3b82f6",
-    "Green Line": "#22c55e",
-    "Violet Line": "#8b5cf6",
-    "Pink Line": "#ec4899",
-    "Magenta Line": "#d946ef",
-    "Grey Line": "#64748b",
-    "Airport Express": "#fb923c"
-  };
-  return map[line] || "#38bdf8";
-}
-
-function lineClass(line) {
-  return clean(line).replace(/s+/g, "-");
-}
-
-function showMessage(title, badge = "Closed") {
-  resultCard.classList.remove("hidden");
-  resultName.textContent = title;
-  resultMeta.textContent = "-";
-  setBadge(badge);
-  [resultLines, resultColors, resultInterchange, resultCoordinates, resultType, resultAlternatives, resultReason, resultUpdated].forEach(el => {
-    el.textContent = "-";
+function filtered(){
+  let arr = stations.filter(s => {
+    const q = state.q.toLowerCase();
+    const okq = !q || [s.name, s.category, ...s.lines, ...s.alternatives, s.reason].join(' ').toLowerCase().includes(q);
+    const oks = state.status === 'All' || s.status === state.status;
+    const okl = state.line === 'All' || s.lines.includes(state.line);
+    const okf = !state.fav || s.favorite;
+    return okq && oks && okl && okf;
   });
+
+  if (state.sort === 'A-Z') arr.sort((a,b) => a.name.localeCompare(b.name));
+  else if (state.sort === 'Status') arr.sort((a,b) => a.status.localeCompare(b.status));
+  else arr.sort((a,b) => relevance(b) - relevance(a));
+
+  return arr;
 }
 
-async function loadStations() {
-  const res = await fetch("./stations.json");
-  stations = await res.json();
+function suggestions(list){
+  if (!state.q) return [];
+  const q = state.q.toLowerCase();
+  const seen = new Set();
+  return list.concat(stations).filter(s => {
+    const hit = s.name.toLowerCase().includes(q) || s.lines.join(' ').toLowerCase().includes(q);
+    if (!hit || seen.has(s.name)) return false;
+    seen.add(s.name);
+    return true;
+  }).slice(0,6);
 }
 
-async function loadDisruptions() {
-  const res = await fetch("./disruptions.json");
-  disruptions = await res.json();
-}
+function renderSuggestions(list){
+  const box = $('suggestions');
+  const arr = suggestions(list);
 
-function renderStats() {
-  const allLines = uniq(stations.flatMap(s => s.lines));
-  stationTotal.textContent = stations.length;
-  lineTotal.textContent = allLines.length;
-  interchangeTotal.textContent = stations.filter(s => s.interchange).length;
-  openTotal.textContent = stations.filter(s => getStatus(s) === "Open").length;
-}
-
-function renderLineFilters() {
-  const lines = ["All", ...uniq(stations.flatMap(s => s.lines)).sort()];
-  lineFilters.innerHTML = lines.map(line => `
-    <button class="line-chip ${line === "All" ? "active" : ""}" data-line="${line}">
-      ${line}
-    </button>
-  `).join("");
-
-  lineFilters.querySelectorAll(".line-chip").forEach(btn => {
-    btn.addEventListener("click", () => applyFilter(btn.dataset.line));
-  });
-}
-
-function renderSuggestions(query) {
-  const q = clean(query);
-  if (!q) {
-    suggestions.classList.add("hidden");
-    suggestions.innerHTML = "";
+  if (!state.q) {
+    box.classList.remove('show');
+    box.setAttribute('aria-expanded','false');
+    box.innerHTML = '';
     return;
   }
 
-  const matches = stations.filter(s => clean(s.name).includes(q)).slice(0, 7);
-  if (!matches.length) {
-    suggestions.classList.add("hidden");
-    suggestions.innerHTML = "";
-    return;
-  }
+  box.innerHTML = arr.length
+    ? arr.map((s,i) => `<button type="button" data-name="${s.name}" class="${i===0?'active':''}" role="option" aria-selected="${i===0?'true':'false'}">${s.name}<span class="muted"> · ${s.lines.join(', ')}</span></button>`).join('')
+    : '<button type="button" disabled>No suggestions</button>';
 
-  suggestions.innerHTML = matches.map(s => `
-    <div class="suggestion-item" data-name="${s.name}">
-      <strong>${s.name}</strong>
-      <span>${s.lines.join(" • ")}</span>
-    </div>
-  `).join("");
-
-  suggestions.classList.remove("hidden");
+  box.classList.add('show');
+  box.setAttribute('aria-expanded','true');
 }
 
-function renderResult(station) {
-  const disruption = getDisruption(station.name);
-  const status = getStatus(station);
+function render(){
+  const list = filtered();
 
-  resultCard.classList.remove("hidden");
-  resultName.textContent = station.name;
-  resultMeta.textContent = `${station.type || "Station"} • ${station.lines.join(", ")}`;
-  setBadge(status);
+  $('countChip').textContent = `${stations.length} stations`;
+  $('statusChip').textContent = `${stations.filter(s => s.status === 'Open').length} open`;
+  $('resultMeta').textContent = `${list.length} result${list.length!==1?'s':''} for ${state.q || 'all stations'}`;
 
-  resultLines.textContent = station.lines.join(", ");
-  resultColors.textContent = station.lines.map(l => `${l}: ${colorFromLine(l)}`).join(" | ");
-  resultInterchange.textContent = station.interchange ? "Yes" : "No";
-  resultCoordinates.textContent = station.coordinates ? `${station.coordinates.lat}, ${station.coordinates.lng}` : "-";
-  resultType.textContent = station.type || "Station";
-  resultAlternatives.textContent = disruption?.alternatives?.length
-    ? disruption.alternatives.join(", ")
-    : (station.alternatives?.length ? station.alternatives.join(", ") : "No alternatives listed.");
-  resultReason.textContent = disruption?.reason || "No disruption reported.";
-  resultUpdated.textContent = disruption?.lastUpdated || "Not updated yet";
-}
+  $('miniSummary').innerHTML = `
+    <div class="kpis">
+      <div class="kpi"><b>${list.filter(s => s.status==='Open').length}</b><span>Open</span></div>
+      <div class="kpi"><b>${list.filter(s => s.status==='Closed').length}</b><span>Closed</span></div>
+      <div class="kpi"><b>${list.filter(s => s.status==='Limited').length}</b><span>Limited</span></div>
+    </div>`;
 
-function searchStation() {
-  const query = clean(stationInput.value);
-  if (!query) {
-    showMessage("Please enter a station name.", "Closed");
-    return;
-  }
+  $('routeTips').textContent = 'Use filters to narrow stations by line or status. Click a station for alternatives.';
 
-  const station = stations.find(s => clean(s.name) === query || clean(s.name).includes(query));
-  if (!station) {
-    showMessage("Station not found.", "Closed");
-    return;
-  }
-  renderResult(station);
-}
+  $('resultsList').innerHTML = list.length
+    ? list.map(s => `
+      <div class="station ${state.selected===s.name?'selected':''}" data-name="${s.name}">
+        <div class="row">
+          <div>
+            <div class="name">${s.name}</div>
+            <div class="muted" style="font-size:12px;margin-top:3px;">${s.lines.join(' • ')}</div>
+          </div>
+          <span class="status ${s.status.toLowerCase()}">${s.status}</span>
+        </div>
+        <div class="meta">
+          <span class="tag">${s.category}</span>
+          <span class="tag">${s.updated}</span>
+        </div>
+      </div>`).join('')
+    : '<div class="empty">No stations match your search.</div>';
 
-function applyFilter(line) {
-  activeLine = line;
-  document.querySelectorAll(".line-chip").forEach(chip => {
-    chip.classList.toggle("active", chip.dataset.line === line);
-  });
-  renderStationList();
-}
-
-function renderStationList() {
-  const filtered = activeLine === "All"
-    ? stations
-    : stations.filter(s => s.lines.includes(activeLine));
-
-  stationCount.textContent = `${filtered.length} station${filtered.length === 1 ? "" : "s"} shown`;
-
-  stationList.innerHTML = filtered.map(station => {
-    const status = getStatus(station);
-    return `
-      <article class="station-card" data-name="${station.name}">
-        <h3>${station.name}</h3>
-        <p class="station-meta">${station.lines.join(", ")}</p>
-        <p class="station-meta">Type: ${station.type || "Station"} • Interchange: ${station.interchange ? "Yes" : "No"}</p>
-        <p class="station-meta">Status: ${status}</p>
-      </article>
-    `;
-  }).join("");
-
-  stationList.querySelectorAll(".station-card").forEach(card => {
-    card.addEventListener("click", () => {
-      const station = stations.find(s => s.name === card.dataset.name);
-      if (station) renderResult(station);
-    });
-  });
-}
-
-searchBtn.addEventListener("click", searchStation);
-stationInput.addEventListener("keydown", e => {
-  if (e.key === "Enter") searchStation();
-});
-stationInput.addEventListener("input", e => renderSuggestions(e.target.value));
-
-suggestions.addEventListener("click", e => {
-  const item = e.target.closest(".suggestion-item");
-  if (!item) return;
-  stationInput.value = item.dataset.name;
-  suggestions.classList.add("hidden");
-  searchStation();
-});
-
-document.addEventListener("click", e => {
-  if (!suggestions.contains(e.target) && e.target !== stationInput) {
-    suggestions.classList.add("hidden");
-  }
-});
-
-resetFiltersBtn.addEventListener("click", () => {
-  activeLine = "All";
-  document.querySelectorAll(".line-chip").forEach(chip => chip.classList.remove("active"));
-  const all = [...document.querySelectorAll(".line-chip")].find(ch => ch.dataset.line === "All");
-  if (all) all.classList.add("active");
-  renderStationList();
-});
-
-(async function init() {
-  await loadStations();
-  await loadDisruptions();
-  renderStats();
-  renderLineFilters();
-  renderStationList();
-  stationCount.textContent = `${stations.length} stations loaded`;
-})();
+  const s = stations.find(x => x.
