@@ -130,4 +130,145 @@ function render(){
       </div>`).join('')
     : '<div class="empty">No stations match your search.</div>';
 
-  const s = stations.find(x => x.
+  const s = stations.find(x => x.name === state.selected) || list[0] || stations[0];
+  if (s) {
+    state.selected = s.name;
+    $('detailPane').innerHTML = `
+      <div class="hero">
+        <h3>${s.name}</h3>
+        <p>${s.reason}</p>
+        <div class="meta" style="margin-top:12px">
+          <span class="status ${s.status.toLowerCase()}">${s.status}</span>
+          <span class="tag">${s.category}</span>
+          <span class="tag">Updated ${s.updated}</span>
+        </div>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><b>${s.lines.length}</b><span>Lines</span></div>
+        <div class="kpi"><b>${s.alternatives.length}</b><span>Alternatives</span></div>
+        <div class="kpi"><b>${s.favorite ? 'Yes' : 'No'}</b><span>Favorite</span></div>
+      </div>
+      <div class="panel">
+        <div class="muted" style="font-size:12px;margin-bottom:8px;">Lines</div>
+        <div class="alt">${s.lines.map(l => `<span class="tag">${l}</span>`).join('')}</div>
+      </div>
+      <div class="panel">
+        <div class="muted" style="font-size:12px;margin-bottom:8px;">Alternatives</div>
+        <div class="alt">${s.alternatives.map(a => `<span class="tag">${a}</span>`).join('')}</div>
+      </div>`;
+  }
+
+  renderSuggestions(list);
+}
+
+function pick(name){
+  state.selected = name;
+  if (!recent.includes(name)) recent.unshift(name);
+  recent = recent.slice(0,5);
+  render();
+}
+
+$('search').addEventListener('input', e => {
+  state.q = e.target.value.trim();
+  render();
+});
+
+$('search').addEventListener('keydown', e => {
+  const items = [...$('suggestions').querySelectorAll('button:not([disabled])')];
+  if (!items.length) return;
+
+  const active = items.findIndex(x => x.classList.contains('active'));
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    items.forEach(x => x.classList.remove('active'));
+    items[(active + 1) % items.length].classList.add('active');
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    items.forEach(x => x.classList.remove('active'));
+    items[(active - 1 + items.length) % items.length].classList.add('active');
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    const chosen = items.find(x => x.classList.contains('active')) || items[0];
+    if (chosen && chosen.dataset.name) {
+      $('search').value = chosen.dataset.name;
+      state.q = chosen.dataset.name;
+      $('suggestions').classList.remove('show');
+      $('suggestions').setAttribute('aria-expanded','false');
+      pick(chosen.dataset.name);
+    }
+  } else if (e.key === 'Escape') {
+    $('suggestions').classList.remove('show');
+    $('suggestions').setAttribute('aria-expanded','false');
+  }
+});
+
+document.addEventListener('click', e => {
+  const p = e.target.closest('.pill');
+  if (p) {
+    state[p.dataset.k] = p.dataset.v;
+    document.querySelectorAll(`[data-k="${p.dataset.k}"]`).forEach(b => b.classList.toggle('active', b.dataset.v === p.dataset.v));
+    render();
+    return;
+  }
+
+  const s = e.target.closest('.station');
+  if (s) {
+    pick(s.dataset.name);
+    return;
+  }
+
+  const sug = e.target.closest('#suggestions button');
+  if (sug && sug.dataset.name) {
+    $('search').value = sug.dataset.name;
+    state.q = sug.dataset.name;
+    $('suggestions').classList.remove('show');
+    $('suggestions').setAttribute('aria-expanded','false');
+    pick(sug.dataset.name);
+    return;
+  }
+
+  if (!e.target.closest('.searchbox')) {
+    $('suggestions').classList.remove('show');
+    $('suggestions').setAttribute('aria-expanded','false');
+  }
+});
+
+$('favBtn').onclick = () => {
+  state.fav = !state.fav;
+  $('favBtn').classList.toggle('active', state.fav);
+  render();
+};
+
+$('recentBtn').onclick = () => {
+  state.recent = !state.recent;
+  $('recentBtn').classList.toggle('active', state.recent);
+  if (state.recent && recent[0]) {
+    $('search').value = recent[0];
+    state.q = recent[0];
+  }
+  render();
+};
+
+$('clearBtn').onclick = () => {
+  state = { q:'', status:'All', line:'All', sort:'Relevance', fav:false, recent:false, selected:stations[0].name };
+  $('search').value = '';
+  document.querySelectorAll('.toggle').forEach(b => b.classList.remove('active'));
+  buildButtons($('statusFilters'), statuses, 'status');
+  buildButtons($('lineFilters'), lines, 'line');
+  buildButtons($('sortFilters'), sorts, 'sort');
+  render();
+};
+
+$('suggestions').addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (b && b.dataset.name) {
+    $('search').value = b.dataset.name;
+    state.q = b.dataset.name;
+    $('suggestions').classList.remove('show');
+    $('suggestions').setAttribute('aria-expanded','false');
+    pick(b.dataset.name);
+  }
+});
+
+render();
