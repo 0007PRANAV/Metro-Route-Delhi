@@ -1,1 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MetroRoute Delhi</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="hero">
+      <h1>MetroRoute Delhi</h1>
+      <p>Check Delhi Metro station status quickly during disruptions.</p>
+    </header>
 
+    <section class="search-box">
+      <input type="text" id="stationInput" placeholder="Search metro station..." />
+      <button onclick="searchStation()">Search</button>
+    </section>
+
+    <section id="result" class="result hidden">
+      <h2 id="stationName"></h2>
+      <p><strong>Status:</strong> <span id="stationStatus"></span></p>
+      <p><strong>Reason:</strong> <span id="stationReason"></span></p>
+      <p><strong>Alternative Station(s):</strong> <span id="stationAlternatives"></span></p>
+      <p><strong>Last Updated:</strong> <span id="stationUpdated"></span></p>
+    </section>
+
+    <section class="info-card">
+      <h3>About</h3>
+      <p>This project helps users find if a Delhi Metro station is open, closed, or limited and shows alternate stations too.</p>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
