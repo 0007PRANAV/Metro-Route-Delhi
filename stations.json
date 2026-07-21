@@ -2,36 +2,217 @@
   {
     "name": "Rajiv Chowk",
     "lines": ["Blue Line", "Yellow Line"],
+    "lineColors": ["#3b82f6", "#facc15"],
+    "type": "Interchange",
     "coordinates": { "lat": 28.6328, "lng": 77.2197 },
-    "interchange": "Yes",
+    "interchange": true,
     "alternatives": ["Barakhamba Road", "Patel Chowk"]
   },
   {
     "name": "Kashmere Gate",
     "lines": ["Red Line", "Yellow Line", "Violet Line"],
+    "lineColors": ["#ef4444", "#facc15", "#8b5cf6"],
+    "type": "Interchange",
     "coordinates": { "lat": 28.6675, "lng": 77.2286 },
-    "interchange": "Yes",
+    "interchange": true,
     "alternatives": ["Tis Hazari", "Shastri Park"]
   },
   {
     "name": "Central Secretariat",
     "lines": ["Yellow Line", "Violet Line"],
+    "lineColors": ["#facc15", "#8b5cf6"],
+    "type": "Interchange",
     "coordinates": { "lat": 28.6156, "lng": 77.2128 },
-    "interchange": "Yes",
+    "interchange": true,
     "alternatives": ["Udyog Bhawan", "Patel Chowk"]
   },
   {
     "name": "New Delhi",
     "lines": ["Yellow Line", "Airport Express"],
+    "lineColors": ["#facc15", "#fb923c"],
+    "type": "Interchange",
     "coordinates": { "lat": 28.643, "lng": 77.221 },
-    "interchange": "Yes",
+    "interchange": true,
     "alternatives": ["Shivaji Stadium", "Rajiv Chowk"]
   },
   {
     "name": "Hauz Khas",
     "lines": ["Yellow Line", "Magenta Line"],
+    "lineColors": ["#facc15", "#d946ef"],
+    "type": "Interchange",
     "coordinates": { "lat": 28.5434, "lng": 77.2067 },
-    "interchange": "Yes",
+    "interchange": true,
     "alternatives": ["Green Park", "Panchsheel Park"]
+  },
+  {
+    "name": "Dwarka Sector 21",
+    "lines": ["Blue Line", "Airport Express"],
+    "lineColors": ["#3b82f6", "#fb923c"],
+    "type": "Terminal / Interchange",
+    "coordinates": { "lat": 28.5494, "lng": 77.0433 },
+    "interchange": true,
+    "alternatives": ["Dwarka Sector 8", "Yashobhoomi Dwarka Sector 25"]
+  },
+  {
+    "name": "Noida Electronic City",
+    "lines": ["Blue Line"],
+    "lineColors": ["#3b82f6"],
+    "type": "Terminal",
+    "coordinates": { "lat": 28.5677, "lng": 77.3561 },
+    "interchange": false,
+    "alternatives": ["Noida Sector 62", "Noida Sector 59"]
+  },
+  {
+    "name": "Vaishali",
+    "lines": ["Blue Line"],
+    "lineColors": ["#3b82f6"],
+    "type": "Terminal",
+    "coordinates": { "lat": 28.6457, "lng": 77.3383 },
+    "interchange": false,
+    "alternatives": ["Kaushambi", "Anand Vihar"]
+  },
+  {
+    "name": "Rithala",
+    "lines": ["Red Line"],
+    "lineColors": ["#ef4444"],
+    "type": "Terminal",
+    "coordinates": { "lat": 28.7206, "lng": 77.1072 },
+    "interchange": false,
+    "alternatives": ["Nangloi", "Netaji Subhash Place"]
+  },
+  {
+    "name": "Shaheed Sthal (New Bus Adda)",
+    "lines": ["Red Line"],
+    "lineColors": ["#ef4444"],
+    "type": "Terminal",
+    "coordinates": { "lat": 28.6807, "lng": 77.4155 },
+    "interchange": false,
+    "alternatives": ["Dilshad Garden", "Raj Bagh"]
+  },
+  {
+    "name": "Samaypur Badli",
+    "lines": ["Yellow Line"],
+    "lineColors": ["#facc15"],
+    "type": "Terminal",
+    "coordinates": { "lat": 28.7464, "lng": 77.1389 },
+    "interchange": false,
+    "alternatives": ["Rohini Sector 18-19", "Haiderpur Badli Mor"]
+  },
+  {
+    "name": "Millennium City Centre Gurugram",
+    "lines": ["Yellow Line"],
+    "lineColors": ["#facc15"],
+    "type": "Terminal",
+    "coordinates": { "lat": 28.4624, "lng": 77.0574 },
+    "interchange": false,
+    "alternatives": ["Iffco Chowk", "Huda City Centre"]
+  },
+  {
+    "name": "Botanical Garden",
+    "lines": ["Blue Line", "Magenta Line"],
+    "lineColors": ["#3b82f6", "#d946ef"],
+    "type": "Interchange",
+    "coordinates": { "lat": 28.5641, "lng": 77.3348 },
+    "interchange": true,
+    "alternatives": ["Noida Sector 18", "Okhla Bird Sanctuary"]
+  },
+  {
+    "name": "Janakpuri West",
+    "lines": ["Blue Line", "Magenta Line"],
+    "lineColors": ["#3b82f6", "#d946ef"],
+    "type": "Interchange",
+    "coordinates": { "lat": 28.6297, "lng": 77.0911 },
+    "interchange": true,
+    "alternatives": ["Tilak Nagar", "Uttam Nagar East"]
+  },
+  {
+    "name": "Kirti Nagar",
+    "lines": ["Blue Line", "Green Line"],
+    "lineColors": ["#3b82f6", "#22c55e"],
+    "type": "Interchange",
+    "coordinates": { "lat": 28.6557, "lng": 77.1507 },
+    "interchange": true,
+    "alternatives": ["Moti Nagar", "Shadipur"]
+  },
+  {
+    "name": "Mandi House",
+    "lines": ["Blue Line", "Violet Line"],
+    "lineColors": ["#3b82f6", "#8b5cf6"],
+    "type": "Interchange",
+    "coordinates": { "lat": 28.6138, "lng": 77.2283 },
+    "interchange": true,
+    "alternatives": ["Janpath", "Central Secretariat"]
+  },
+  {
+    "name": "Lajpat Nagar",
+    "lines": ["Pink Line", "Violet Line"],
+    "lineColors": ["#ec4899", "#8b5cf6"],
+    "type": "Interchange",
+    "coordinates": { "lat": 28.5718, "lng": 77.2367 },
+    "interchange": true,
+    "alternatives": ["Moolchand", "Nehru Place"]
+  },
+  {
+    "name": "INA",
+    "lines": ["Yellow Line", "Pink Line"],
+    "lineColors": ["#facc15", "#ec4899"],
+    "type": "Interchange",
+    "coordinates": { "lat": 28.5826, "lng": 77.2097 },
+    "interchange": true,
+    "alternatives": ["AIIMS", "South Extension"]
+  },
+  {
+    "name": "Azadpur",
+    "lines": ["Yellow Line", "Pink Line", "Red Line"],
+    "lineColors": ["#facc15", "#ec4899", "#ef4444"],
+    "type": "Interchange",
+    "coordinates": { "lat": 28.7061, "lng": 77.1817 },
+    "interchange": true,
+    "alternatives": ["Model Town", "Adarsh Nagar"]
+  },
+  {
+    "name": "Punjabi Bagh West",
+    "lines": ["Pink Line", "Green Line"],
+    "lineColors": ["#ec4899", "#22c55e"],
+    "type": "Interchange",
+    "coordinates": { "lat": 28.6698, "lng": 77.1426 },
+    "interchange": true,
+    "alternatives": ["Shakur Basti", "Nangloi"]
+  },
+  {
+    "name": "Lal Qila",
+    "lines": ["Violet Line"],
+    "lineColors": ["#8b5cf6"],
+    "type": "Station",
+    "coordinates": { "lat": 28.6563, "lng": 77.2393 },
+    "interchange": false,
+    "alternatives": ["Jama Masjid", "Delhi Gate"]
+  },
+  {
+    "name": "Majlis Park",
+    "lines": ["Pink Line"],
+    "lineColors": ["#ec4899"],
+    "type": "Terminal",
+    "coordinates": { "lat": 28.7127, "lng": 77.1691 },
+    "interchange": false,
+    "alternatives": ["Azadpur", "Shalimar Bagh"]
+  },
+  {
+    "name": "Shiv Vihar",
+    "lines": ["Pink Line"],
+    "lineColors": ["#ec4899"],
+    "type": "Terminal",
+    "coordinates": { "lat": 28.6926, "lng": 77.2875 },
+    "interchange": false,
+    "alternatives": ["Johri Enclave", "Gokulpuri"]
+  },
+  {
+    "name": "Dwarka",
+    "lines": ["Grey Line"],
+    "lineColors": ["#64748b"],
+    "type": "Terminal / Station",
+    "coordinates": { "lat": 28.5767, "lng": 77.0336 },
+    "interchange": false,
+    "alternatives": ["Najafgarh", "Dwarka Sector 21"]
   }
 ]
