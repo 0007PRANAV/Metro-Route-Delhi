@@ -1,37 +1,58 @@
 [
   {
-    "stationName": "Rajiv Chowk",
-    "status": "Limited",
-    "reason": "Crowd management due to a special event.",
+    "name": "Rajiv Chowk",
+    "status": "Open",
+    "reason": "Central interchange and high traffic.",
     "alternatives": ["Barakhamba Road", "Patel Chowk"],
-    "lastUpdated": "2026-07-22 12:05 AM"
+    "updated": "Just now"
   },
   {
-    "stationName": "Central Secretariat",
-    "status": "Closed",
-    "reason": "Temporary maintenance work.",
-    "alternatives": ["Udyog Bhawan", "Patel Chowk"],
-    "lastUpdated": "2026-07-22 12:05 AM"
-  },
-  {
-    "stationName": "Kashmere Gate",
-    "status": "Open",
-    "reason": "No disruption reported.",
-    "alternatives": ["Tis Hazari"],
-    "lastUpdated": "2026-07-22 12:05 AM"
-  },
-  {
-    "stationName": "Dwarka Sector 21",
+    "name": "Kashmere Gate",
     "status": "Limited",
-    "reason": "Airport line crowd management during peak travel hours.",
-    "alternatives": ["Dwarka Sector 8", "Yashobhoomi Dwarka Sector 25"],
-    "lastUpdated": "2026-07-22 12:05 AM"
+    "reason": "Partial platform access during maintenance.",
+    "alternatives": ["Civil Lines", "Lal Qila"],
+    "updated": "8 min ago"
   },
   {
-    "stationName": "Hauz Khas",
+    "name": "AIIMS",
     "status": "Open",
-    "reason": "No disruption reported.",
-    "alternatives": ["Green Park"],
-    "lastUpdated": "2026-07-22 12:05 AM"
+    "reason": "Fully operational.",
+    "alternatives": ["INA", "Green Park"],
+    "updated": "2 min ago"
+  },
+  {
+    "name": "Mandi House",
+    "status": "Closed",
+    "reason": "Temporary restriction due to operational work.",
+    "alternatives": ["Janpath", "ITO"],
+    "updated": "15 min ago"
+  },
+  {
+    "name": "Hauz Khas",
+    "status": "Open",
+    "reason": "Normal service.",
+    "alternatives": ["Green Park", "Panchsheel Park"],
+    "updated": "5 min ago"
+  },
+  {
+    "name": "Dwarka Sector 21",
+    "status": "Open",
+    "reason": "Operational and open.",
+    "alternatives": ["Dwarka Sector 8"],
+    "updated": "3 min ago"
+  },
+  {
+    "name": "Noida Electronic City",
+    "status": "Limited",
+    "reason": "Reduced frequency.",
+    "alternatives": ["Noida Sector 62"],
+    "updated": "12 min ago"
+  },
+  {
+    "name": "Janakpuri West",
+    "status": "Open",
+    "reason": "Normal service.",
+    "alternatives": ["Uttam Nagar East", "Tilak Nagar"],
+    "updated": "1 min ago"
   }
 ]
