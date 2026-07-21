@@ -102,4 +102,37 @@ function searchStation() {
   );
 
   if (!station) {
-    showMessage("Station not found.", "Cl
+    showMessage("Station not found.", "Closed");
+    return;
+  }
+
+  renderStation(station);
+}
+
+async function initRealtime() {
+  await supabase.realtime.setAuth();
+
+  supabase
+    .channel("disruptions-table")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "disruptions" },
+      async () => {
+        await loadDisruptions();
+        const current = clean(stationInput.value);
+        if (current) searchStation();
+      }
+    )
+    .subscribe();
+}
+
+searchBtn.addEventListener("click", searchStation);
+stationInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") searchStation();
+});
+
+(async function start() {
+  await loadStations();
+  await loadDisruptions();
+  await initRealtime();
+})();
