@@ -7,30 +7,71 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <header class="hero">
-      <h1>MetroRoute Delhi</h1>
-      <p>Check Delhi Metro station status quickly during disruptions.</p>
-    </header>
+  <main class="app">
+    <section class="hero">
+      <div class="hero-text">
+        <p class="eyebrow">MetroRoute Delhi</p>
+        <h1>Check Delhi Metro station status fast</h1>
+        <p class="subtext">
+          Search any station to see whether it is Open, Closed, or Limited, plus alternatives and last updated time.
+        </p>
+      </div>
 
-    <section class="search-box">
-      <input type="text" id="stationInput" placeholder="Search metro station..." />
-      <button onclick="searchStation()">Search</button>
+      <div class="search-card">
+        <label for="stationInput">Search station</label>
+        <div class="search-row">
+          <input id="stationInput" type="text" placeholder="Example: Rajiv Chowk" autocomplete="off" />
+          <button id="searchBtn">Search</button>
+        </div>
+        <p class="hint">Data is loaded from stations.json and disruptions.json.</p>
+      </div>
     </section>
 
-    <section id="result" class="result hidden">
-      <h2 id="stationName"></h2>
-      <p><strong>Status:</strong> <span id="stationStatus"></span></p>
-      <p><strong>Reason:</strong> <span id="stationReason"></span></p>
-      <p><strong>Alternative Station(s):</strong> <span id="stationAlternatives"></span></p>
-      <p><strong>Last Updated:</strong> <span id="stationUpdated"></span></p>
+    <section id="resultCard" class="result-card hidden">
+      <div class="result-header">
+        <h2 id="resultName">Station name</h2>
+        <span id="statusBadge" class="badge">Status</span>
+      </div>
+
+      <div class="result-grid">
+        <div class="result-item">
+          <h3>Metro Lines</h3>
+          <p id="resultLines">-</p>
+        </div>
+        <div class="result-item">
+          <h3>Interchange</h3>
+          <p id="resultInterchange">-</p>
+        </div>
+        <div class="result-item">
+          <h3>Coordinates</h3>
+          <p id="resultCoordinates">-</p>
+        </div>
+        <div class="result-item">
+          <h3>Reason</h3>
+          <p id="resultReason">-</p>
+        </div>
+        <div class="result-item">
+          <h3>Alternatives</h3>
+          <p id="resultAlternatives">-</p>
+        </div>
+        <div class="result-item">
+          <h3>Last Updated</h3>
+          <p id="resultUpdated">-</p>
+        </div>
+      </div>
     </section>
 
     <section class="info-card">
-      <h3>About</h3>
-      <p>This project helps users find if a Delhi Metro station is open, closed, or limited and shows alternate stations too.</p>
+      <h2>About this project</h2>
+      <p>
+        MetroRoute Delhi helps users quickly check temporary Delhi Metro station disruptions during events, maintenance,
+        protests, festivals, or security restrictions.
+      </p>
+      <p class="note">
+        Independent student project. Not affiliated with DMRC.
+      </p>
     </section>
-  </div>
+  </main>
 
   <script src="script.js"></script>
 </body>
