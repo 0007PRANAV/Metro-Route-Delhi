@@ -9,67 +9,175 @@
 <body>
   <main class="app">
     <section class="hero">
-      <div class="hero-text">
-        <p class="eyebrow">MetroRoute Delhi</p>
-        <h1>Check Delhi Metro station status in seconds</h1>
+      <div class="hero-copy">
+        <div class="eyebrow-row">
+          <span class="eyebrow">MetroRoute Delhi</span>
+          <span class="pill">Static • Fast • Responsive</span>
+        </div>
+        <h1>Delhi Metro station search with line maps, status, and details</h1>
         <p class="subtext">
-          Search any station to see whether it is open, closed, or limited, plus alternatives and the latest update.
+          Search major Delhi Metro stations, browse by line, and view interchange details, station type,
+          coordinates, nearby alternatives, and temporary disruption status.
         </p>
+
+        <div class="hero-stats">
+          <div class="stat-card">
+            <strong id="stationTotal">0</strong>
+            <span>Stations</span>
+          </div>
+          <div class="stat-card">
+            <strong id="lineTotal">0</strong>
+            <span>Lines</span>
+          </div>
+          <div class="stat-card">
+            <strong id="interchangeTotal">0</strong>
+            <span>Interchanges</span>
+          </div>
+          <div class="stat-card">
+            <strong id="openTotal">0</strong>
+            <span>Open now</span>
+          </div>
+        </div>
       </div>
 
-      <div class="search-card">
+      <div class="search-panel">
         <label for="stationInput">Search station</label>
         <div class="search-row">
-          <input id="stationInput" type="text" placeholder="Enter station name" autocomplete="off" />
+          <input id="stationInput" type="text" placeholder="Type a station name..." autocomplete="off" />
           <button id="searchBtn">Search</button>
         </div>
-        <p class="hint">Permanent data comes from stations.json. Live disruption data comes from Supabase.</p>
+        <div id="suggestions" class="suggestions hidden"></div>
+        <p class="hint">Try Rajiv Chowk, Kashmere Gate, Hauz Khas, Botanical Garden, or Janakpuri West.</p>
       </div>
+    </section>
+
+    <section class="line-board">
+      <div class="section-head">
+        <div>
+          <h2>Network outline</h2>
+          <p>Major Delhi Metro routes and interchange-heavy hubs, simplified for quick browsing.</p>
+        </div>
+        <button id="resetFiltersBtn" class="ghost-btn">Reset filters</button>
+      </div>
+
+      <div class="map-outline">
+        <div class="route-line red">
+          <span class="route-label">Red Line</span>
+          <div class="route-track"><span>Rithala</span><span>Azadpur</span><span>Kashmere Gate</span><span>Shaheed Sthal</span></div>
+        </div>
+        <div class="route-line yellow">
+          <span class="route-label">Yellow Line</span>
+          <div class="route-track"><span>Samaypur Badli</span><span>Rajiv Chowk</span><span>Central Secretariat</span><span>Millennium City Centre</span></div>
+        </div>
+        <div class="route-line blue">
+          <span class="route-label">Blue Line</span>
+          <div class="route-track"><span>Dwarka</span><span>Rajiv Chowk</span><span>Botanical Garden</span><span>Vaishali / Noida</span></div>
+        </div>
+        <div class="route-line green">
+          <span class="route-label">Green Line</span>
+          <div class="route-track"><span>Kirti Nagar</span><span>Punjabi Bagh West</span><span>Brig. Hoshiar Singh</span></div>
+        </div>
+        <div class="route-line violet">
+          <span class="route-label">Violet Line</span>
+          <div class="route-track"><span>Kashmere Gate</span><span>Mandi House</span><span>Lajpat Nagar</span><span>Raja Nahar Singh</span></div>
+        </div>
+        <div class="route-line pink">
+          <span class="route-label">Pink Line</span>
+          <div class="route-track"><span>Majlis Park</span><span>Azadpur</span><span>Lajpat Nagar</span><span>Shiv Vihar</span></div>
+        </div>
+        <div class="route-line magenta">
+          <span class="route-label">Magenta Line</span>
+          <div class="route-track"><span>Janakpuri West</span><span>Hauz Khas</span><span>Botanical Garden</span></div>
+        </div>
+        <div class="route-line grey">
+          <span class="route-label">Grey Line</span>
+          <div class="route-track"><span>Dwarka</span><span>Najafgarh</span><span>Dhansa Bus Stand</span></div>
+        </div>
+        <div class="route-line airport">
+          <span class="route-label">Airport Express</span>
+          <div class="route-track"><span>New Delhi</span><span>Dwarka Sector 21</span><span>Yashobhoomi</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="filters-card">
+      <div class="section-head">
+        <div>
+          <h2>Browse by line</h2>
+          <p>Tap a chip to filter stations.</p>
+        </div>
+      </div>
+      <div id="lineFilters" class="line-filters"></div>
     </section>
 
     <section id="resultCard" class="result-card hidden">
-      <div class="result-header">
-        <h2 id="resultName">Station</h2>
+      <div class="section-head result-head">
+        <div>
+          <h2 id="resultName">Station</h2>
+          <p id="resultMeta" class="result-meta">-</p>
+        </div>
         <span id="statusBadge" class="badge">Status</span>
       </div>
 
-      <div class="result-grid">
-        <div class="result-item">
-          <h3>Metro Lines</h3>
+      <div class="detail-grid">
+        <article class="detail-card">
+          <h3>Metro lines</h3>
           <p id="resultLines">-</p>
-        </div>
-        <div class="result-item">
+        </article>
+        <article class="detail-card">
+          <h3>Line colors</h3>
+          <p id="resultColors">-</p>
+        </article>
+        <article class="detail-card">
           <h3>Interchange</h3>
           <p id="resultInterchange">-</p>
-        </div>
-        <div class="result-item">
+        </article>
+        <article class="detail-card">
           <h3>Coordinates</h3>
           <p id="resultCoordinates">-</p>
-        </div>
-        <div class="result-item">
-          <h3>Reason</h3>
-          <p id="resultReason">-</p>
-        </div>
-        <div class="result-item">
+        </article>
+        <article class="detail-card">
+          <h3>Station type</h3>
+          <p id="resultType">-</p>
+        </article>
+        <article class="detail-card">
           <h3>Alternatives</h3>
           <p id="resultAlternatives">-</p>
-        </div>
-        <div class="result-item">
-          <h3>Last Updated</h3>
+        </article>
+        <article class="detail-card">
+          <h3>Disruption reason</h3>
+          <p id="resultReason">-</p>
+        </article>
+        <article class="detail-card">
+          <h3>Last updated</h3>
           <p id="resultUpdated">-</p>
-        </div>
+        </article>
       </div>
     </section>
 
+    <section class="stations-card">
+      <div class="section-head">
+        <div>
+          <h2>Stations</h2>
+          <p id="stationCount">Loading...</p>
+        </div>
+      </div>
+      <div id="stationList" class="station-grid"></div>
+    </section>
+
     <section class="info-card">
-      <h2>About</h2>
+      <h2>About this project</h2>
       <p>
-        This is an independent student project for checking Delhi Metro station disruptions during events, maintenance, security restrictions, and other temporary changes.
+        MetroRoute Delhi is an independent student project. It is not affiliated with or endorsed by DMRC.
+        It uses local static JSON files so it runs immediately on GitHub Pages or Vercel.
       </p>
-      <p class="note">Not affiliated with or endorsed by DMRC.</p>
     </section>
   </main>
 
-  <script type="module" src="script.js"></script>
+  <footer class="footer">
+    <p>MetroRoute Delhi • Static demo project</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
